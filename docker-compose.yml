@@ -3,7 +3,7 @@ services:
   app:
     build:
       context: ./
-    command: go run cmd/main.go
+    command: air
     volumes:
       - ./:/myapp
     ports:
