@@ -1,20 +1,21 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	port := os.Getenv("PORT")
 
-	http.HandleFunc("/api/sample", getHelloWorld)
-	http.ListenAndServe(":" + port, nil)
+	r := gin.Default()
+	r.GET("/api/sample", getGinSample)
+
+	r.Run(":" + port)
 }
 
-func getHelloWorld(w http.ResponseWriter, _r *http.Request) {
-	ping := map[string]string{"message": "Hello World!!"}
-	res, _ := json.Marshal(ping)
-	w.Write(res)
+func getGinSample(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H { "message": "Hello Gin World!" })
 }
