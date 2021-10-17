@@ -1,0 +1,8 @@
+{
+  "name": "go-sample-api-server",
+  "scripts": {
+    "dc-build": "docker compose build --no-cache",
+    "dc-up": "docker compose up -d",
+    "dc-logs": "docker compose logs -f"
+  }
+}
