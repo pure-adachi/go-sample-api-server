@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,6 +14,7 @@ func main() {
 	r := gin.Default()
 	r.GET("/api/sample", getGinSample)
 	r.GET("/api/todos", getTodos)
+	r.GET("/api/todos/:Id", getTodo)
 
 	r.Run(":" + port)
 }
@@ -21,17 +23,38 @@ func getGinSample(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H { "message": "Hello Gin World!" })
 }
 
-func getTodos(c *gin.Context) {
-	type Todo struct {
-		Id int
-		Title string
-	}
+type Todo struct {
+	Id int
+	Title string
+}
 
-	todos := [...] Todo {
+func todos() [3]Todo {
+	return [3] Todo {
 		{ Id: 1, Title: "TODO 1" },
 		{ Id: 2, Title: "TODO 2" },
 		{ Id: 3, Title: "TODO 3" },
 	}
+}
 
-	c.JSON(http.StatusOK, gin.H { "todos": todos })
+func getTodos(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H { "todos": todos() })
+}
+
+func getTodo(c *gin.Context) {
+	Id := c.Param("Id")
+	id, _ := strconv.Atoi(Id)
+
+	todo := findTodoById(id)
+
+	c.JSON(http.StatusOK, gin.H { "todo": todo })
+}
+
+func findTodoById(id int) Todo {
+	for _, todo := range todos() {
+		if todo.Id == id {
+			return todo
+		}
+	}
+
+	return Todo{ Id: -1 }
 }
