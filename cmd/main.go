@@ -16,6 +16,7 @@ func main() {
 	r.GET("/api/todos", getTodos)
 	r.GET("/api/todos/:Id", getTodo)
 	r.POST("/api/todos", addTodo)
+	r.PATCH("/api/todos/:Id", updateTodo)
 
 	r.Run(":" + port)
 }
@@ -63,6 +64,22 @@ func addTodo(c *gin.Context) {
 	newTodo := Todo { Id: count + 1, Title: inputTodo.Title }
 
 	c.JSON(http.StatusOK, gin.H { "todo": newTodo })
+}
+
+func updateTodo(c *gin.Context) {
+	Id := c.Param("Id")
+	id, _ := strconv.Atoi(Id)
+
+	todo := findTodoById(id)
+
+	var inputTodo InputTodo
+	c.BindJSON(&inputTodo)
+
+	if todo.Id != -1 {
+		todo.Title = inputTodo.Title
+	}
+
+	c.JSON(http.StatusOK, gin.H { "todo": todo })
 }
 
 func findTodoById(id int) Todo {
