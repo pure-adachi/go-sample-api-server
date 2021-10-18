@@ -15,6 +15,7 @@ func main() {
 	r.GET("/api/sample", getGinSample)
 	r.GET("/api/todos", getTodos)
 	r.GET("/api/todos/:Id", getTodo)
+	r.POST("/api/todos", addTodo)
 
 	r.Run(":" + port)
 }
@@ -47,6 +48,21 @@ func getTodo(c *gin.Context) {
 	todo := findTodoById(id)
 
 	c.JSON(http.StatusOK, gin.H { "todo": todo })
+}
+
+type InputTodo struct {
+	Title string
+}
+
+func addTodo(c *gin.Context) {
+	var inputTodo InputTodo
+	c.BindJSON(&inputTodo)
+
+	data := todos()
+	count := len(data)
+	newTodo := Todo { Id: count + 1, Title: inputTodo.Title }
+
+	c.JSON(http.StatusOK, gin.H { "todo": newTodo })
 }
 
 func findTodoById(id int) Todo {
