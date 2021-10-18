@@ -17,6 +17,7 @@ func main() {
 	r.GET("/api/todos/:Id", getTodo)
 	r.POST("/api/todos", addTodo)
 	r.PATCH("/api/todos/:Id", updateTodo)
+	r.DELETE("/api/todos/:Id", deleteTodo)
 
 	r.Run(":" + port)
 }
@@ -80,6 +81,21 @@ func updateTodo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H { "todo": todo })
+}
+
+func deleteTodo(c *gin.Context) {
+	Id := c.Param("Id")
+	id, _ := strconv.Atoi(Id)
+
+	var activeTodo [] Todo
+
+	for _, todo := range todos() {
+		if todo.Id != id {
+			activeTodo = append(activeTodo, todo)
+		}
+	}
+	
+	c.JSON(http.StatusOK, gin.H { "todos": activeTodo })
 }
 
 func findTodoById(id int) Todo {
